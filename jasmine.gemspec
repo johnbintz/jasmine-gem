@@ -48,4 +48,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'json_pure', '>= 1.4.3'
   s.add_dependency 'selenium-webdriver', '>= 0.1.3'
 
+  s.add_dependency 'coffee-script-source'
 end

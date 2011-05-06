@@ -1,4 +1,5 @@
 require 'rack'
+require 'coffee_script/source'
 
 module Jasmine
   class RunAdapter
@@ -8,6 +9,7 @@ module Jasmine
         "/__JASMINE_ROOT__/lib/jasmine.js",
         "/__JASMINE_ROOT__/lib/jasmine-html.js",
         "/__JASMINE_ROOT__/lib/json2.js",
+        "/__COFFEESCRIPT_PATH__/coffee-script.js",
       ]
       @jasmine_stylesheets = ["/__JASMINE_ROOT__/lib/jasmine.css"]
     end
@@ -36,6 +38,15 @@ module Jasmine
         { 'Content-Type' => 'text/html' },
         [body]
       ]
+    end
+
+    def type(filename)
+      case File.extname(filename)
+      when '.coffee'
+        'text/coffeescript'
+      else
+        'text/javascript'
+      end
     end
   end
 
@@ -82,6 +93,7 @@ module Jasmine
       map('/__suite__')        { run Jasmine::FocusedSuite.new(config) }
 
       map('/__JASMINE_ROOT__') { run Rack::File.new(Jasmine.root) }
+      map('/__COFFEESCRIPT_PATH__') { run Rack::File.new(File.expand_path(CoffeeScript::Source.bundled_path + '/..')) }
       map(config.spec_path)    { run Rack::File.new(config.spec_dir) }
       map(config.root_path)    { run Rack::File.new(config.project_root) }
 
